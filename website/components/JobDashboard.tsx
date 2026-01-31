@@ -15,8 +15,26 @@ export default function JobDashboard({ initialJobs }: { initialJobs: JobPost[] }
   // Filter jobs based on search
   const filteredJobs = jobs.filter(job => 
     job.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    job.organization.toLowerCase().includes(searchQuery.toLowerCase())
+    job.organization.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (job.location && job.location.toLowerCase().includes(searchQuery.toLowerCase()))
   );
+
+  // Group jobs by location
+  const groupedJobs = filteredJobs.reduce((acc, job) => {
+    const location = job.location || 'India';
+    if (!acc[location]) {
+      acc[location] = [];
+    }
+    acc[location].push(job);
+    return acc;
+  }, {} as Record<string, JobPost[]>);
+
+  // Sort locations: "India" first, then alphabetically
+  const sortedLocations = Object.keys(groupedJobs).sort((a, b) => {
+    if (a === 'India') return -1;
+    if (b === 'India') return 1;
+    return a.localeCompare(b);
+  });
 
   const handleScrape = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +78,7 @@ export default function JobDashboard({ initialJobs }: { initialJobs: JobPost[] }
                 <Search className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
                 <input 
                     type="text" 
-                    placeholder="Search by exam name, organization..." 
+                    placeholder="Search by exam, state, organization..." 
                     className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition-all text-gray-900 placeholder-gray-400"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -96,25 +114,39 @@ export default function JobDashboard({ initialJobs }: { initialJobs: JobPost[] }
          )}
       </div>
 
-      {/* Results Grid */}
-      <div className="flex justify-between items-center mb-8 px-4 md:px-0">
-            <h2 className="text-2xl font-bold text-gray-900">
-                {searchQuery ? `Search Results (${filteredJobs.length})` : 'Recent Notifications'}
-            </h2>
-            <span className="text-sm font-medium text-gray-500 bg-white px-3 py-1 rounded-full border border-gray-200">
-                {filteredJobs.length} Active Jobs
-            </span>
-      </div>
-
+      {/* Grouped Results */}
       {filteredJobs.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 md:px-0">
-          {filteredJobs.map((job) => (
-            <JobCard key={job.slug} job={job} />
+        <div className="space-y-12 px-4 md:px-0">
+          {sortedLocations.map((location) => (
+            <div key={location}>
+              {/* Location Header */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex-1 h-px bg-gradient-to-r from-blue-200 to-transparent"></div>
+                <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                  <span className="bg-blue-50 text-blue-700 px-4 py-2 rounded-full border border-blue-200 shadow-sm">
+                    {location}
+                  </span>
+                  <span className="text-sm font-medium text-gray-500">
+                    ({groupedJobs[location].length} {groupedJobs[location].length === 1 ? 'Job' : 'Jobs'})
+                  </span>
+                </h2>
+                <div className="flex-1 h-px bg-gradient-to-l from-blue-200 to-transparent"></div>
+              </div>
+
+              {/* Jobs Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {groupedJobs[location].map((job) => (
+                  <JobCard key={job.slug} job={job} />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       ) : (
         <div className="text-center py-20 bg-white rounded-xl border border-dashed border-gray-300 mx-4 md:mx-0">
-            <p className="text-gray-500 text-lg">No jobs found matching "{searchQuery}".</p>
+            <p className="text-gray-500 text-lg">
+              {searchQuery ? `No jobs found matching "${searchQuery}".` : 'No jobs available yet.'}
+            </p>
         </div>
       )}
     </div>
