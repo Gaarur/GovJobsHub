@@ -2,6 +2,7 @@
 title: "Direct Recruitment (D-6/E-1/2025)"
 date: "2025-12-22T00:00:00.000Z"
 organization: "Uttar Pradesh Public Service Commission (UPPSC)"
+location: "India"
 source_url: "https://uppsc.up.nic.in/CandidatePages/Notifications.aspx"
 apply_link: "https://uppsc.up.nic.in/CandidatePages/Notifications.aspx"
 official_pdf: "https://uppsc.up.nic.in/OuterPages/View_Advertisement.aspx?ID=558&flag=E"
@@ -12,7 +13,8 @@ last_date: "2026-01-22T00:00:00.000Z"
 # Direct Recruitment (D-6/E-1/2025) – 2026
 
 ## Overview
-**Uttar Pradesh Public Service Commission (UPPSC)** has released a recruitment notification for the post of **Direct Recruitment (D-6/E-1/2025)**. Interested candidates can apply online before the last date.
+**Uttar Pradesh Public Service Commission (UPPSC)** has released a recruitment notification.
+**Location**: India
 
 ## Organization
 Uttar Pradesh Public Service Commission (UPPSC)
